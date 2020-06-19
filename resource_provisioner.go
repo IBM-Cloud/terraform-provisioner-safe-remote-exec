@@ -48,7 +48,7 @@ func Provisioner() terraform.ResourceProvisioner {
 
 			"timeout": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "Time out in Minutes for the command/script executed",
 			},
 		},
@@ -104,8 +104,10 @@ func generateScripts(d *schema.ResourceData) ([]string, error) {
 }
 
 func getTimeOut(d *schema.ResourceData) int {
-	v := d.Get("timeout")
-	timeout := v.(int)
+	timeout := 0
+	if val, ok := d.GetOk("timeout"); ok {
+		timeout = val.(int)
+	}
 	return timeout
 }
 

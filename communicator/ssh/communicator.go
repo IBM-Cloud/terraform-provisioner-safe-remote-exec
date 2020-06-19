@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Anil-CM/safe-remote-exec/communicator/remote"
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/Anil-CM/safe-remote-exec/communicator/remote"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 )
@@ -366,6 +366,9 @@ func (c *Communicator) Start(cmd *remote.Cmd, timeout int) error {
 			return err
 		}
 		if timeout > mTimeout && mTimeout != 0 {
+			timeout = mTimeout
+		}
+		if timeout == 0 && mTimeout != 0 {
 			timeout = mTimeout
 		}
 		log.Println("max timeout configured: ", timeout)

@@ -157,7 +157,10 @@ func (c *Communicator) Start(rc *remote.Cmd, timeout int) error {
 		if err != nil {
 			return err
 		}
-		if timeout < mTimeout && mTimeout != 0 {
+		if timeout > mTimeout && mTimeout != 0 {
+			timeout = mTimeout
+		}
+		if timeout == 0 && mTimeout != 0 {
 			timeout = mTimeout
 		}
 		log.Println("max timeout configured: ", timeout)
