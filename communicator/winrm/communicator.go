@@ -1,18 +1,25 @@
 package winrm
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/Anil-CM/safe-remote-exec/communicator/remote"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/masterzen/winrm"
 	"github.com/packer-community/winrmcp/winrmcp"
-	"github.com/Anil-CM/safe-remote-exec/communicator/remote"
+)
+
+const (
+	MaxTimeOut = "MAX_TIMEOUT"
 )
 
 // Communicator represents the WinRM communicator
@@ -131,7 +138,7 @@ func (c *Communicator) ScriptPath() string {
 }
 
 // Start implementation of communicator.Communicator interface
-func (c *Communicator) Start(rc *remote.Cmd) error {
+func (c *Communicator) Start(rc *remote.Cmd, timeout int) error {
 	rc.Init()
 	log.Printf("[DEBUG] starting remote command: %s", rc.Command)
 
@@ -144,9 +151,71 @@ func (c *Communicator) Start(rc *remote.Cmd) error {
 		}
 	}
 
-	status, err := c.client.Run(rc.Command, rc.Stdout, rc.Stderr)
-	rc.SetExitStatus(status, err)
+	t := os.Getenv(MaxTimeOut)
+	if len(t) != 0 {
+		mTimeout, err := strconv.Atoi(t)
+		if err != nil {
+			return err
+		}
+		if timeout < mTimeout && mTimeout != 0 {
+			timeout = mTimeout
+		}
+		log.Println("max timeout configured: ", timeout)
+	}
 
+	ctx, _ := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
+	execComplete := make(chan struct{})
+
+	//status, err := c.client.Run(rc.Command, rc.Stdout, rc.Stderr)
+	shell, err := c.client.CreateShell()
+	if err != nil {
+		return err
+	}
+	//defer shell.Close()
+	cmdHandler, err := shell.Execute(rc.Command)
+	if err != nil {
+		return err
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		io.Copy(rc.Stdout, cmdHandler.Stdout)
+	}()
+
+	go func() {
+		defer wg.Done()
+		io.Copy(rc.Stderr, cmdHandler.Stderr)
+	}()
+
+	go func() {
+		for {
+			select {
+
+			case <-execComplete:
+				log.Println("Commnad execution completed successfully within timeout limit")
+				return
+
+			case <-ctx.Done():
+				log.Println("Remote command execution is terminated due to execution timeout")
+				cmdHandler.Close()
+				shell.Close()
+				return
+			}
+		}
+	}()
+
+	wg.Wait()
+	cmdHandler.Wait()
+
+	if err != nil {
+		return err
+	} else {
+		defer close(execComplete)
+		rc.SetExitStatus(cmdHandler.ExitCode(), err)
+	}
 	return nil
 }
 
@@ -161,7 +230,7 @@ func (c *Communicator) Upload(path string, input io.Reader) error {
 }
 
 // UploadScript implementation of communicator.Communicator interface
-func (c *Communicator) UploadScript(path string, input io.Reader) error {
+func (c *Communicator) UploadScript(path string, input io.Reader, timeout int) error {
 	return c.Upload(path, input)
 }
 

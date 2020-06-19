@@ -8,9 +8,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/hashicorp/terraform/terraform"
 	"github.com/Anil-CM/safe-remote-exec/communicator/remote"
 	"github.com/Anil-CM/safe-remote-exec/communicator/ssh"
+	"github.com/Anil-CM/safe-remote-exec/communicator/winrm"
+	"github.com/hashicorp/terraform/terraform"
 )
 
 // Communicator is an interface that must be implemented by all communicators
@@ -47,8 +48,8 @@ func New(s *terraform.InstanceState) (Communicator, error) {
 	switch connType {
 	case "ssh", "": // The default connection type is ssh, so if connType is empty use ssh
 		return ssh.New(s)
-	//case "winrm":
-	//	return winrm.New(s)
+	case "winrm":
+		return winrm.New(s)
 	default:
 		return nil, fmt.Errorf("connection type '%s' not supported", connType)
 	}
