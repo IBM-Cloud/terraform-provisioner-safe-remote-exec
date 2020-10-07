@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/Anil-CM/safe-remote-exec/communicator/remote"
+	"github.com/IBM-Cloud/terraform-provisioner-safe-remote-exec/communicator/remote"
 )
 
 // MockCommunicator is an implementation of Communicator that can be used for tests.

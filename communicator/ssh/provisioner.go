@@ -16,7 +16,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/mitchellh/mapstructure"
 	sshagent "github.com/xanzy/ssh-agent"
-	"github.com/Anil-CM/safe-remote-exec/communicator/shared"
+	"github.com/IBM-Cloud/terraform-provisioner-safe-remote-exec/communicator/shared"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	"golang.org/x/crypto/ssh/knownhosts"

@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Anil-CM/safe-remote-exec/communicator/remote"
+	"github.com/IBM-Cloud/terraform-provisioner-safe-remote-exec/communicator/remote"
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform/terraform"
 	"golang.org/x/crypto/ssh"

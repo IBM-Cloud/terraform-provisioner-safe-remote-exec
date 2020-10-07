@@ -8,9 +8,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Anil-CM/safe-remote-exec/communicator/remote"
-	"github.com/Anil-CM/safe-remote-exec/communicator/ssh"
-	"github.com/Anil-CM/safe-remote-exec/communicator/winrm"
+	"github.com/IBM-Cloud/terraform-provisioner-safe-remote-exec/communicator/remote"
+	"github.com/IBM-Cloud/terraform-provisioner-safe-remote-exec/communicator/ssh"
+	"github.com/IBM-Cloud/terraform-provisioner-safe-remote-exec/communicator/winrm"
 	"github.com/hashicorp/terraform/terraform"
 )
 

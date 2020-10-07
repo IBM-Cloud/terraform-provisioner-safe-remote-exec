@@ -1,5 +1,5 @@
-# safe-remote-exec
-safe-remote-exec provisoner introduces an environment to provide controlled execution of commands on the remote hosts. This is achieved by introducing a new parameter `timeout` in the schema. The configured timeout will be in the seconds. The remote command execution will be stopped/killed by sending `SIGKILL` to remote command if the command excution time exceeds the timout limit configured
+# terraform-provisioner-safe-remote-exec
+terraform-provisioner-safe-remote-exec is enhanced version of remote-exec provisioner from the terraform. It introduces an environment to provide controlled execution of commands on the remote hosts. This is achieved by introducing a new parameter `timeout` in the schema. The configured timeout will be in the seconds. The remote command execution will be stopped/killed by sending `SIGKILL` to remote command if the command excution time exceeds the timout limit configured
 
 ## Example
 

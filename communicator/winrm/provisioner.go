@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/mitchellh/mapstructure"
-	"github.com/Anil-CM/safe-remote-exec/communicator/shared"
+	"github.com/IBM-Cloud/terraform-provisioner-safe-remote-exec/communicator/shared"
 )
 
 const (
